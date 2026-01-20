@@ -2,6 +2,11 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image"; 
+
+// IMPORTANTE: Asegúrate de que esta imagen exista en tu carpeta assets/images
+// Si tu imagen es .jpg, cambia la extensión aquí abajo.
+import wordsBg from "../assets/images/words-bg.webp";
 
 export default function WordsSection() {
   const words = useMemo(() => ["CREATIVAS", "NOVEDOSAS", "EFICIENTES"], []);
@@ -15,13 +20,20 @@ export default function WordsSection() {
   }, [words.length]);
 
   return (
-    <section className="relative w-full overflow-hidden">
-      {/* Background */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/2026.jpg')" }}
-        aria-hidden="true"
-      />
+    // CORRECCIÓN: 'z-20' (con guion) es vital para tapar al Hero fijo
+    <section className="relative z-20 w-full overflow-hidden bg-black">
+      
+      {/* Nuevo Background Optimizado */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src={wordsBg}
+          alt="Fondo dinámico Botmania"
+          fill
+          className="object-cover"
+          placeholder="blur"
+          quality={80}
+        />
+      </div>
 
       {/* Soft aqua overlay */}
       <div
@@ -52,4 +64,3 @@ export default function WordsSection() {
     </section>
   );
 }
-
