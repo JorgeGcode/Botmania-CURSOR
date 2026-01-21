@@ -2,99 +2,89 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
-
-const NAV_LINKS = [
-  { name: "INICIO", href: "/", active: true },
-  { name: "ACERCA DE VOX", href: "/nosotros", hasDropdown: true },
-  { name: "PORTFOLIO", href: "/portfolio" },
-  { name: "SERVICIOS", href: "/servicios", hasDropdown: true },
-  { name: "CLIENTES", href: "/clientes" },
-  { name: "NOVEDADES", href: "/novedades" },
-  { name: "CONTACTO", href: "/contacto" },
-];
+import { Menu } from "lucide-react";
+import { siteConfig } from "@/config/site"; // 1. Importamos tu configuración
+import { Button } from "@/components/ui/button"; // 2. Usamos el botón estandarizado
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; // 3. El menú móvil "inteligente"
 
 export default function Navbar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gradient-to-b from-black/90 to-transparent">
-      <div className="max-w-7xl mx-auto px-6 h-28 flex items-center justify-between">
+    <header className="fixed top-0 left-0 w-full z-50 border-b border-white/10 bg-black/90 backdrop-blur-md transition-all">
+      {/* Container: Centra el contenido automáticamente sin calcular márgenes */}
+      <div className="container mx-auto flex h-24 items-center justify-between px-6">
         
         {/* --- LOGO --- */}
-        <div className="flex-shrink-0">
-          <Link href="/" className="text-white font-bold text-3xl tracking-tighter">
-            BOTMANIA<span className="text-orange-500">.</span>
-          </Link>
-        </div>
+        <Link href="/" className="text-3xl font-bold tracking-tighter text-white">
+          {siteConfig.name}<span className="text-orange-500">.</span>
+        </Link>
 
-        {/* --- LINKS (Desktop) --- */}
-        {/* CORRECCIÓN: gap-6 para juntar secciones, whitespace-nowrap para evitar saltos de línea */}
-        <div className="hidden lg:flex items-center gap-6">
-          {NAV_LINKS.map((link) => (
-            <DesktopNavLink key={link.name} link={link} />
-          ))}
-        </div>
-
-        {/* --- CTA (High Ticket Style) --- */}
-        <div className="hidden lg:block flex-shrink-0">
-          <Link
-            href="/presupuesto"
-            className="group flex flex-col items-center justify-center w-48 h-12 border border-white rounded-full transition-all duration-300 hover:bg-white hover:text-black"
-          >
-            <span className="text-[10px] uppercase tracking-widest leading-none mb-1 group-hover:font-semibold">
-              Solicitar
-            </span>
-            <span className="text-sm font-bold leading-none">
-              Presupuesto
-            </span>
-          </Link>
-        </div>
-
-        {/* --- MENÚ HAMBURGUESA --- */}
-        <button 
-          className="lg:hidden text-white"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={36} /> : <Menu size={36} />}
-        </button>
-      </div>
-
-      {/* --- MENÚ MÓVIL --- */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-28 left-0 w-full bg-black/95 flex flex-col p-10 gap-8 border-b border-white/10 h-screen">
-          {NAV_LINKS.map((link) => (
-            <Link 
-              key={link.name} 
-              href={link.href}
-              className="text-white text-3xl font-bold border-b border-white/5 pb-4"
-              onClick={() => setIsMobileMenuOpen(false)}
+        {/* --- MENÚ DE ESCRITORIO (Itera sobre la config) --- */}
+        <nav className="hidden lg:flex items-center gap-8">
+          {siteConfig.navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm font-medium text-white transition-colors hover:text-orange-500"
             >
-              {link.name}
+              {item.label}
             </Link>
           ))}
+        </nav>
+
+        {/* --- CTA (High Ticket) --- */}
+        <div className="hidden lg:block">
+          <Link
+            href={siteConfig.cta.href}
+            className="group flex h-12 w-48 flex-col items-center justify-center rounded-full border border-white bg-transparent text-white transition-all hover:bg-white hover:text-black"
+          >
+            <span className="text-[10px] uppercase tracking-widest opacity-80 group-hover:opacity-100 font-semibold">
+              {siteConfig.cta.subLabel}
+            </span>
+            <span className="text-base font-bold leading-none">
+              {siteConfig.cta.label}
+            </span>
+          </Link>
         </div>
-      )}
-    </nav>
-  );
-}
 
-function DesktopNavLink({ link }: { link: typeof NAV_LINKS[0] }) {
-  return (
-    <Link href={link.href} className="group relative flex items-center gap-1 py-4">
-      {/* CORRECCIÓN: text-white sólido (sin opacidad) y whitespace-nowrap */}
-      <span className="text-sm font-medium tracking-wide text-white whitespace-nowrap transition-colors duration-300">
-        {link.name}
-      </span>
-
-      {link.hasDropdown && (
-        <ChevronDown size={16} className="text-white transition-transform duration-300 group-hover:rotate-180" />
-      )}
-
-      {/* Indicador naranja */}
-      <span className={`absolute bottom-2 left-0 h-[2px] bg-orange-500 transition-all duration-300 ${
-        link.active ? "w-full" : "w-0 group-hover:w-full"
-      }`} />
-    </Link>
+        {/* --- MENÚ MÓVIL (Sheet) --- */}
+        <div className="lg:hidden">
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                <Menu className="h-8 w-8" />
+                <span className="sr-only">Abrir menú</span>
+              </Button>
+            </SheetTrigger>
+            
+            {/* El panel lateral que se desliza */}
+            <SheetContent side="right" className="w-[300px] border-l border-white/10 bg-black/95 text-white sm:w-[400px]">
+              <div className="flex flex-col gap-8 mt-10">
+                {siteConfig.navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="text-2xl font-bold tracking-tight hover:text-orange-500 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                
+                {/* CTA Móvil */}
+                <Link
+                  href={siteConfig.cta.href}
+                  onClick={() => setIsOpen(false)}
+                  className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-white text-black font-bold text-lg"
+                >
+                  {siteConfig.cta.subLabel} {siteConfig.cta.label}
+                </Link>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </header>
   );
 }
