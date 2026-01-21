@@ -76,3 +76,26 @@ export default function Navbar() {
                 <Menu className="h-8 w-8" />
               </Button>
             </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] border-l border-white/10 bg-black/95 text-white">
+              <div className="flex flex-col gap-8 mt-12">
+                {siteConfig.navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      "text-2xl font-bold tracking-tight transition-colors",
+                      pathname === item.href ? "text-orange-500" : "text-white hover:text-orange-500"
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </header>
+  );
+}
