@@ -80,7 +80,7 @@ export default function Navbar() {
   );
 }
 
-// --- SUB-COMPONENTE: Link de Escritorio ---
+// --- SUB-COMPONENTE: Link de Escritorio 
 // Esto maneja la lógica visual de la línea naranja y la flechita
 function DesktopNavLink({ link }: { link: typeof NAV_LINKS[0] }) {
   return (
