@@ -6,7 +6,7 @@ import { ChevronDown, Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { name: "INICIO", href: "/", active: true },
-  { name: "ACERCA DE NOSOTROS", href: "/nosotros", hasDropdown: true },
+  { name: "ACERCA DE VOX", href: "/nosotros", hasDropdown: true }, // Ajustado a "VOX" o tu marca
   { name: "PORTFOLIO", href: "/portfolio" },
   { name: "SERVICIOS", href: "/servicios", hasDropdown: true },
   { name: "CLIENTES", href: "/clientes" },
@@ -18,8 +18,9 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
-      <div className="max-w-7xl mx-auto px-6 h-28 flex items-center justify-between">
+    // CAMBIO 1: Fondo suave para mejor lectura sin perder transparencia total si se desea
+    <nav className="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gradient-to-b from-black/80 to-transparent">
+      <div className="max-w-[1400px] mx-auto px-6 h-32 flex items-center justify-between">
         
         {/* --- LOGO --- */}
         <div className="flex-shrink-0">
@@ -29,19 +30,28 @@ export default function Navbar() {
         </div>
 
         {/* --- LINKS (Desktop) --- */}
-        <div className="hidden lg:flex items-center gap-10">
+        {/* CAMBIO 2: Mayor espaciado (gap-12) y fuente más fina para elegancia */}
+        <div className="hidden lg:flex items-center gap-12">
           {NAV_LINKS.map((link) => (
             <DesktopNavLink key={link.name} link={link} />
           ))}
         </div>
 
-        {/* --- CTA --- */}
+        {/* --- CTA (High Ticket Style) --- */}
         <div className="hidden lg:block">
           <Link
             href="/presupuesto"
-            className="px-8 py-3 rounded-full border-2 border-white text-white font-bold text-xl transition-all duration-300 hover:bg-white hover:text-black"
+            // CAMBIO 3: Flex-col para apilar texto, bordes redondeados tipo cápsula
+            className="group flex flex-col items-center justify-center w-48 h-14 border border-white rounded-full transition-all duration-300 hover:bg-white hover:text-black"
           >
-            Solicitar Presupuesto
+            {/* Texto superior pequeño */}
+            <span className="text-[10px] uppercase tracking-widest leading-none mb-1 opacity-90 group-hover:opacity-100">
+              Solicitar
+            </span>
+            {/* Texto principal más grande */}
+            <span className="text-base font-bold leading-none">
+              Presupuesto
+            </span>
           </Link>
         </div>
 
@@ -54,9 +64,9 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* --- MENÚ MÓVIL --- */}
+      {/* --- MENÚ MÓVIL (Mantenido igual por ahora) --- */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-28 left-0 w-full bg-black/95 flex flex-col p-10 gap-8 border-b border-white/10 h-screen">
+        <div className="lg:hidden absolute top-32 left-0 w-full bg-black/95 flex flex-col p-10 gap-8 border-b border-white/10 h-screen">
           {NAV_LINKS.map((link) => (
             <Link 
               key={link.name} 
@@ -75,17 +85,18 @@ export default function Navbar() {
 
 function DesktopNavLink({ link }: { link: typeof NAV_LINKS[0] }) {
   return (
-    <Link href={link.href} className="group relative flex items-center gap-2 py-2">
-      <span className="text-lg font-bold tracking-wider text-white transition-opacity duration-300 group-hover:opacity-100 opacity-90">
+    <Link href={link.href} className="group relative flex items-center gap-1 py-2">
+      {/* CAMBIO 4: Font-medium en lugar de bold, y texto más pequeño (text-sm/base) para aire premium */}
+      <span className="text-sm font-medium tracking-widest text-white transition-opacity duration-300 group-hover:opacity-100 opacity-80">
         {link.name}
       </span>
 
       {link.hasDropdown && (
-        <ChevronDown size={20} className="text-white" />
+        <ChevronDown size={16} className="text-white opacity-80 group-hover:opacity-100 transition-opacity" />
       )}
 
-      {/* Línea indicadora naranja */}
-      <span className={`absolute -bottom-1 left-0 h-[4px] bg-orange-500 transition-all duration-300 ${
+      {/* Indicador naranja ajustado */}
+      <span className={`absolute -bottom-1 left-0 h-[2px] bg-orange-500 transition-all duration-300 ${
         link.active ? "w-full" : "w-0 group-hover:w-full"
       }`} />
     </Link>
